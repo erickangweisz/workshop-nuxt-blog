@@ -62,6 +62,22 @@
   export default {
 
     async asyncData ({params, app}) {
+      const fileContent = await import(`~/contents/${app.i18n.locale}/blog/${params.slug}.md`)
+      const attr = fileContent.attributes
+      return {
+        name: params.slug,
+        title: attr.title,
+        trans: attr.trans,
+        year: attr.year,
+        id: attr.id,
+        description: attr.description,
+        renderFunc: fileContent.vue.render,
+        staticRenderFuncs: fileContent.vue.staticRenderFns,
+        image: {
+          main: attr.image && attr.image.main,
+          og: attr.image && attr.image.og
+        }
+      }
     },
 
     nuxtI18n: {
@@ -122,6 +138,10 @@
         }
         return () => import(`~/components/blog/${this.extraComponent}.vue`)
       }
+    },
+
+    transition: {
+      name: 'slide-fade'
     }
   }
 </script>
